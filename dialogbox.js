@@ -1,5 +1,5 @@
 class DialogBox {
-    constructor(passages, highlightIndices, msPerPassage, textFrame) {
+    constructor(passages, highlightIndices, msPerPassage, textFrame, fontSize) {
         // let's assign the passages we have, the highlight indices given in
         // a tuple, and the milliseconds per passage!
         colorMode(HSB, 360, 100, 100, 100)
@@ -17,6 +17,7 @@ class DialogBox {
         this.lastAdvance = millis()
         // a cache to store our character widths.
         this.cache = {}
+        this.FONT_SIZE = fontSize
     }
 
     // loads the saved box texture with transparency
@@ -35,6 +36,8 @@ class DialogBox {
         let leftMargin = 140
         let topMargin = 520
         stroke(50, 50, 50)
+        textFont(font, this.FONT_SIZE)
+
         // draws a 50-by-50 cross where our text bottom-left is supposed to go.
         // line(leftMargin, topMargin-50, leftMargin, topMargin+50)
         // line(leftMargin-50, topMargin, leftMargin+50, topMargin)
@@ -111,16 +114,15 @@ class DialogBox {
         if (this.characterIndex > currentPassage.length) {
             this.characterIndex = currentPassage.length
         }
-        text(this.lastAdvance, 0, height)
-        // if the milliseconds passed since the last advance is greater, we
-        // advance the current index
-        if (millis() - this.lastAdvance > this.msPerPassage[this.currentIndex]) {
-            this.currentIndex++
-            // now this is deprecated, since each value in msPerPassage is
-            // the time from the start
-            // this.lastAdvance = millis()
-            this.characterIndex = 0
-        }
+    }
+
+    // advance by a passage
+    nextPassage() {
+        this.currentIndex++
+        // now this is deprecated, since each value in msPerPassage is
+        // the time from the start
+        // this.lastAdvance = millis()
+        this.characterIndex = 0
     }
 
     /*  return the width in pixels of char using the pixels array
@@ -129,7 +131,6 @@ class DialogBox {
         if (this.cache[char]) {
             return this.cache[char]
         } else {
-            let FONT_SIZE = 14
             /**
              * create a graphics buffer to display a character. then determine its
              * width by iterating through every pixel. Noting that 'm' in size 18
@@ -139,9 +140,9 @@ class DialogBox {
              * plenty.
              * @type {p5.Graphics}
              */
-            let g = createGraphics(FONT_SIZE, FONT_SIZE * 1.5)
+            let g = createGraphics(this.FONT_SIZE, this.FONT_SIZE * 1.5)
             g.colorMode(HSB, 360, 100, 100, 100)
-            g.textFont(font, FONT_SIZE)
+            g.textFont(font, this.FONT_SIZE)
             g.background(0, 0, 0)
             g.fill(0, 0, 100)
             g.text(char, 0, 0)
@@ -181,7 +182,7 @@ class DialogBox {
      */
     wordWidth(word) {
         let sum = 0
-        let SPACE_WIDTH = 7
+        let SPACE_WIDTH = this.FONT_SIZE/2
         let LETTER_SPACING = 1.25
 
         // add the sum of "olive" the char widths plus the word spacing. for

@@ -24,19 +24,30 @@ let dialogBox // our dialog box
 // let's have our hue and default saturation
 
 
+
 const red_hue = 0
 const green_hue = 85
 const blue_hue = 225
 const sat = 90
 const brightness_light = 60
 const brightness_dark = 30
+
 // and our endpoints
 const endpoints = 10000
+
+// adam's voice
+let artaria
+
+// is adam's voice playing?
+let playing = false
+
+// how long was it been since the sketch was running and it started playing?
+let voiceStartMillis = 0
 
 function preload() {
     font = loadFont('data/giga.ttf')
     passages = loadJSON("passages.json")
-
+    artaria = loadSound("data/artaria.mp3")
 }
 
 /* populate an array of passage text */
@@ -52,6 +63,7 @@ function setup() {
     cam = new Dw.EasyCam(this._renderer, {distance: 240});
     colorMode(HSB, 360, 100, 100, 100)
     textFont(font, 14)
+
     for (let p in passages) {
         textList.push(passages[p]["text"])
         // console.log(p.text)
@@ -74,7 +86,7 @@ function setup() {
     textFrame = loadImage("data/textFrame.png")
     // textFrame.resize(640, 360)
     // console.log(textFrame)
-    dialogBox = new DialogBox(textList, highlightList, msPerPassage, textFrame)
+    dialogBox = new DialogBox(textList, highlightList, msPerPassage, textFrame, 20)
     // console.log(textFrame)
 }
 
@@ -82,11 +94,34 @@ function draw() {
     background(234, 34, 24)
     drawBlenderAxis()
     dialogBox.renderTextFrame(cam)
-    dialogBox.renderText(cam)
-    dialogBox.update()
-    // console.log(textFrame)
 
+    // we should only render our text our update if we're playing. This is
+    // partially why we created the playing variable anyway.
+    if (playing) {
+        // how long has Adam given speech for?
+        let howLongPlayingFor = millis() - voiceStartMillis - msPerPassage[0]
+        // and if that is greater than 0 ,we can show our text
+        if (howLongPlayingFor > 0) {
+            dialogBox.renderText(cam)
+            dialogBox.update()
+        }
+        // also, if we are sufficiently advanced, we can advance to the next
+        // passage
+
+    }
+    // console.log(textFrame)
 }
+
+// if we press s, that means we've started
+function keyPressed() {
+    if (key === 's' && !playing) {
+        artaria.play()
+        artaria.jump(12)
+        playing = true
+        voiceStartMillis = millis()
+    }
+}
+
 // prevent the context menu from showing up :3 nya~
 document.oncontextmenu = function () {
     return false;
