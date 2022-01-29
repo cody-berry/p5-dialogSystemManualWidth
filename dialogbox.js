@@ -42,7 +42,7 @@ class DialogBox {
     }
 
     // renders the text in our dialog box
-    renderText(cam) {
+    renderText(font, cam) {
         cam.beginHUD(p5._renderer, width, height)
 
         // our current passage
@@ -51,7 +51,6 @@ class DialogBox {
         // our margins
         let leftMargin = 140
         let topMargin = 520
-        stroke(50, 50, 50)
         textFont(font, this.FONT_SIZE)
 
         // draws a 50-by-50 cross where our text bottom-left is supposed to go.
@@ -62,6 +61,8 @@ class DialogBox {
         let y = topMargin
         let wrap = false
         fill(0, 0, 100)
+        stroke(0, 0, 100)
+        strokeWeight(5)
         for (let i = 0; i < this.characterIndex; i++) {
             let c = currentPassage[i]
 

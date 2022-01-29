@@ -66,7 +66,7 @@ function setup() {
     createCanvas(1280, 720, WEBGL)
     cam = new Dw.EasyCam(this._renderer, {distance: 240});
     colorMode(HSB, 360, 100, 100, 100)
-    textFont(font, 14)
+    textFont(font, 20)
 
     for (let p in passages) {
         textList.push(passages[p]["text"])
@@ -90,7 +90,7 @@ function setup() {
     textFrame = loadImage("data/textFrame.png")
     // textFrame.resize(640, 360)
     // console.log(textFrame)
-    dialogBox = new DialogBox(textList, highlightList, msTimestamps, textFrame, 20)
+    dialogBox = new DialogBox(textList, highlightList, msTimestamps, textFrame, 24)
     // console.log(textFrame)
 }
 
@@ -108,7 +108,7 @@ function draw() {
 
         // and if that is greater than 0, we can show our text
         if (howLongPlayingFor - msTimestamps[0] > 0) {
-            dialogBox.renderText(cam)
+            dialogBox.renderText(font, cam)
             dialogBox.update()
             dialogBox.renderEquilateralTriangle(20, cam)
         }
