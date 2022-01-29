@@ -119,7 +119,7 @@ class DialogBox {
             // reset wrap to false.
             if (wrap) {
                 x = leftMargin
-                y += textAscent() + textDescent() + 6
+                y += textAscent() + textDescent() + 3
                 wrap = false
             }
         }
