@@ -125,11 +125,22 @@ class DialogBox {
         cam.endHUD()
     }
 
-    // renders our equilateral triangle
-    renderEquilateralTriangle() {
+    // renders our equilateral triangle given a radius
+    renderEquilateralTriangle(r, cam) {
 
-        // our equilateral triangle should on show up if we're full of
+        // our equilateral triangle should only show up if we're full of
         // characters.
+        if (this.characterIndex >= this.passages[this.currentIndex].length) {
+            cam.beginHUD()
+            push()
+            translate(1140, 670 + 2*sin(frameCount/20))
+            fill(188, 20, 98, 35*sin(frameCount/20) + 35)
+            noStroke()
+            // strokeWeight(4)
+            triangle(-r/2, -sqrt(3)/(4) * r, r/2, -sqrt(3)/4 * r, 0, sqrt(3)/4 * r)
+            pop()
+            cam.endHUD()
+        }
     }
 
     // update our status

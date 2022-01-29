@@ -110,7 +110,7 @@ function draw() {
         if (howLongPlayingFor - msTimestamps[0] > 0) {
             dialogBox.renderText(cam)
             dialogBox.update()
-            dialogBox.renderEquilateralTriangle()
+            dialogBox.renderEquilateralTriangle(20, cam)
         }
         dialogBox.advance(howLongPlayingFor)
     }
