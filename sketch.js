@@ -21,10 +21,10 @@ version comments
 let font
 let passages // our json file input
 let dialogBox // our dialog box
+
+
+
 // let's have our hue and default saturation
-
-
-
 const red_hue = 0
 const green_hue = 85
 const blue_hue = 225
@@ -41,7 +41,11 @@ let artaria
 // is adam's voice playing?
 let playing = false
 
-// how long was it been since the sketch was running and it started playing?
+// how many milliseconds we want to skip forward from time=0
+let jumpMillis = 14000;
+
+// how long was it been since the sketch was running and when it started
+// playing?
 let voiceStartMillis = 0
 
 function preload() {
@@ -54,7 +58,7 @@ function preload() {
 let textList = []
 /* grab other information: ms spent on each passage, highlights */
 let highlightList = [] // a list of tuples specifying highlights and indexes
-let msPerPassage = [] // how long to wait before advancing a passage
+let msTimestamps = [] // how long to wait before advancing a passage
 let textFrame // our text frame
 let cam // our camera
 
@@ -76,7 +80,7 @@ function setup() {
             list.push([highlight["start"], highlight["end"]])
         }
         highlightList.push(list)
-        msPerPassage.push(passages[p]["ms"])
+        msTimestamps.push(passages[p]["ms"])
         // console.log(msPerPassage)
     }
 
@@ -86,7 +90,7 @@ function setup() {
     textFrame = loadImage("data/textFrame.png")
     // textFrame.resize(640, 360)
     // console.log(textFrame)
-    dialogBox = new DialogBox(textList, highlightList, msPerPassage, textFrame, 20)
+    dialogBox = new DialogBox(textList, highlightList, msTimestamps, textFrame, 20)
     // console.log(textFrame)
 }
 
@@ -98,16 +102,17 @@ function draw() {
     // we should only render our text our update if we're playing. This is
     // partially why we created the playing variable anyway.
     if (playing) {
+
         // how long has Adam given speech for?
-        let howLongPlayingFor = millis() - voiceStartMillis - msPerPassage[0]
-        // and if that is greater than 0 ,we can show our text
-        if (howLongPlayingFor > 0) {
+        let howLongPlayingFor = millis() - voiceStartMillis + jumpMillis
+
+        // and if that is greater than 0, we can show our text
+        if (howLongPlayingFor - msTimestamps[0] > 0) {
             dialogBox.renderText(cam)
             dialogBox.update()
+            dialogBox.renderEquilateralTriangle()
         }
-        // also, if we are sufficiently advanced, we can advance to the next
-        // passage
-
+        dialogBox.advance(howLongPlayingFor)
     }
     // console.log(textFrame)
 }
@@ -116,7 +121,7 @@ function draw() {
 function keyPressed() {
     if (key === 's' && !playing) {
         artaria.play()
-        artaria.jump(12)
+        artaria.jump(jumpMillis/1000)
         playing = true
         voiceStartMillis = millis()
     }
@@ -129,24 +134,31 @@ document.oncontextmenu = function () {
 
 // draws our blender axis
 function drawBlenderAxis() {
+
     // red, x
     // dark
     stroke(red_hue, sat, brightness_dark)
     line(0, 0, 0, -endpoints, 0, 0)
+
     // light
     stroke(red_hue, sat, brightness_light)
     line(0, 0, 0, endpoints, 0, 0)
+
     // green, y
     // dark
+
     stroke(green_hue, sat, brightness_dark)
     line(0, 0, 0, 0, -endpoints, 0)
+
     // light
     stroke(green_hue, sat, brightness_light)
     line(0, 0, 0, 0, endpoints, 0)
+
     // blue, z
     // dark
     stroke(blue_hue, sat, brightness_dark)
     line(0, 0, 0, 0, 0, -endpoints)
+
     // light
     stroke(blue_hue, sat, brightness_light)
     line(0, 0, 0, 0, 0, endpoints)
