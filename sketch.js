@@ -48,10 +48,13 @@ let jumpMillis = 14000;
 // playing?
 let voiceStartMillis = 0
 
+
+
 function preload() {
     font = loadFont('data/giga.ttf')
     passages = loadJSON("passages.json")
     artaria = loadSound("data/artaria.mp3")
+    textFrame = loadImage("data/textFrame.png")
 }
 
 /* populate an array of passage text */
@@ -63,8 +66,8 @@ let textFrame // our text frame
 let cam // our camera
 
 function setup() {
-    createCanvas(1280, 720, WEBGL)
-    cam = new Dw.EasyCam(this._renderer, {distance: 240});
+    createCanvas(1280, 720)
+    // cam = new Dw.EasyCam(this._renderer, {distance: 240});
     colorMode(HSB, 360, 100, 100, 100)
     textFont(font, 20)
 
@@ -84,10 +87,9 @@ function setup() {
         // console.log(msPerPassage)
     }
 
-    console.log(highlightList)
+
     // console.log(passages.length)
     // console.log(textList)
-    textFrame = loadImage("data/textFrame.png")
     // textFrame.resize(640, 360)
     // console.log(textFrame)
     dialogBox = new DialogBox(textList, highlightList, msTimestamps, textFrame, 24)
@@ -96,35 +98,44 @@ function setup() {
 
 function draw() {
     background(234, 34, 24)
-    drawBlenderAxis()
-    dialogBox.renderTextFrame(cam)
+    // drawBlenderAxis()
+    // dialogBox.renderTextFrame(cam)
 
     // we should only render our text our update if we're playing. This is
     // partially why we created the playing variable anyway.
-    if (playing) {
+    // if (playing) {
+    //
+    //     // how long has Adam given speech for?
+    //     let howLongPlayingFor = millis() - voiceStartMillis + jumpMillis
+    //
+    //     // and if that is greater than 0, we can show our text
+    //     if (howLongPlayingFor - msTimestamps[0] > 0) {
+    //         dialogBox.renderText(font, cam)
+    //         dialogBox.update()
+    //         dialogBox.renderEquilateralTriangle(20, cam)
+    //     }
+    //     dialogBox.advance(howLongPlayingFor)
 
-        // how long has Adam given speech for?
-        let howLongPlayingFor = millis() - voiceStartMillis + jumpMillis
+        // map the milliseconds since it has started from 0 to 40 to a scale
+        // for dialogBox.
+        // let scale = map(millis(), voiceStartMillis, voiceStartMillis+40, 0, 1)
 
-        // and if that is greater than 0, we can show our text
-        if (howLongPlayingFor - msTimestamps[0] > 0) {
-            dialogBox.renderText(font, cam)
-            dialogBox.update()
-            dialogBox.renderEquilateralTriangle(20, cam)
-        }
-        dialogBox.advance(howLongPlayingFor)
-    }
+
+    let scale = constrain(map(mouseX, 50, width-50, 0, 1), 0, 0.9)
+    dialogBox.animate(scale)
+    // }
     // console.log(textFrame)
 }
 
 // if we press s, that means we've started
 function keyPressed() {
-    if (key === 's' && !playing) {
-        artaria.play()
+    if (key === 's') {
+        //artaria.play()
         artaria.jump(jumpMillis/1000)
-        playing = true
+        playing = !playing
         voiceStartMillis = millis()
     }
+
 }
 
 // prevent the context menu from showing up :3 nya~
