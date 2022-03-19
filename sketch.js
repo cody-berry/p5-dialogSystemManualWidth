@@ -23,7 +23,6 @@ let passages // our json file input
 let dialogBox // our dialog box
 
 
-
 // let's have our hue and default saturation
 const red_hue = 0
 const green_hue = 85
@@ -44,10 +43,9 @@ let playing = false
 // how many milliseconds we want to skip forward from time=0
 let jumpMillis = 14000;
 
-// how long was it been since the sketch was running and when it started
-// playing?
+// what is the time difference of when the sketch started and the soundtrack
+// started?
 let voiceStartMillis = 0
-
 
 
 function preload() {
@@ -64,6 +62,7 @@ let highlightList = [] // a list of tuples specifying highlights and indexes
 let msTimestamps = [] // how long to wait before advancing a passage
 let textFrame // our text frame
 let cam // our camera
+
 
 function setup() {
     createCanvas(1280, 720, WEBGL)
@@ -96,6 +95,7 @@ function setup() {
     // console.log(textFrame)
 }
 
+
 function draw() {
     background(234, 34, 24)
     drawBlenderAxis()
@@ -106,6 +106,11 @@ function draw() {
     if (playing) {
 
         // how long has Adam given speech for?
+        // it is depending on the time, so millis(). But he only starts
+        // talking after the soundtrack starts and msTimestamps[0] is
+        // exceeded, so -voiceStartMillis-msTimestamps[0]. We skip
+        // jumpMillis ahead, but it is not included in msTimestamps[0], so
+        // +jumpMillis.
         let howLongPlayingFor = millis() - voiceStartMillis + jumpMillis - msTimestamps[0]
 
         // and if that is greater than 0, we can show our text
@@ -125,13 +130,14 @@ function draw() {
             dialogBox.update()
             dialogBox.renderEquilateralTriangle(20, cam)
         }
-        dialogBox.advance(howLongPlayingFor)
+        dialogBox.advance(howLongPlayingFor + msTimestamps[0])
 
         // map the milliseconds since it has started from 0 to 250 to a scale
         // for dialogBox.
     }
     // console.log(textFrame)
 }
+
 
 // if we press s, that means we've started
 function keyPressed() {
@@ -142,12 +148,18 @@ function keyPressed() {
         voiceStartMillis = millis()
     }
 
+    if (key === 'z') {
+        noLoop()
+        artaria.stop()
+    }
 }
+
 
 // prevent the context menu from showing up :3 nya~
 document.oncontextmenu = function () {
     return false;
 }
+
 
 // draws our blender axis
 function drawBlenderAxis() {
