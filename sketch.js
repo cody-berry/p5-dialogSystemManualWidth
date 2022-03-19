@@ -41,7 +41,7 @@ let artaria
 let playing = false
 
 // how many milliseconds we want to skip forward from time=0
-let jumpMillis = 14000;
+let jumpMillis = 15000;
 
 // what is the time difference of when the sketch started and the soundtrack
 // started?

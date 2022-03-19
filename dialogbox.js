@@ -141,8 +141,8 @@ class DialogBox {
         let currentPassage = this.passages[this.currentIndex]
 
         // our margins
-        let leftMargin = 140
-        let topMargin = 525
+        let leftMargin = this.sideMargin + 40
+        let topMargin = this.topMargin + 82
         textFont(font, this.FONT_SIZE)
 
         // draws a 50-by-50 cross where our text bottom-left is supposed to go.
@@ -178,7 +178,7 @@ class DialogBox {
 
             if (c !== ' ') {
                 text(c, x, y)
-                x += this.charWidth(c)
+                x += this.charWidth(c) + 1
             } else {
                 x += 7
             }
@@ -218,10 +218,10 @@ class DialogBox {
 
         // draw "ADAM" text
         fill(188, 20, 98)
-        text("A", leftMargin-25, topMargin-25)
-        text("D", leftMargin-25 + this.charWidth("A"), topMargin-25)
-        text("A", leftMargin-25 + this.wordWidth("AD"), topMargin-25)
-        text("M", leftMargin-25 + this.wordWidth("ADA"), topMargin-25)
+        text("A", leftMargin-25, topMargin-40)
+        text("D", leftMargin-25 + this.charWidth("A"), topMargin-40)
+        text("A", leftMargin-25 + this.wordWidth("AD"), topMargin-40)
+        text("M", leftMargin-25 + this.wordWidth("ADA"), topMargin-40)
 
         cam.endHUD()
     }
@@ -234,7 +234,7 @@ class DialogBox {
         if (this.characterIndex >= this.passages[this.currentIndex].length) {
             cam.beginHUD()
             push()
-            translate(width-this.sideMargin-r*3, height-this.bottomMargin-r*3)
+            translate(width-this.sideMargin-50, height-this.bottomMargin-40)
             fill(188, 20, 98, 35*sin(frameCount/20) + 50)
             noStroke()
             // strokeWeight(4)
