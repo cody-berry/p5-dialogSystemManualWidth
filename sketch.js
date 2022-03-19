@@ -66,8 +66,8 @@ let textFrame // our text frame
 let cam // our camera
 
 function setup() {
-    createCanvas(1280, 720)
-    // cam = new Dw.EasyCam(this._renderer, {distance: 240});
+    createCanvas(1280, 720, WEBGL)
+    cam = new Dw.EasyCam(this._renderer, {distance: 240});
     colorMode(HSB, 360, 100, 100, 100)
     textFont(font, 20)
 
@@ -98,39 +98,45 @@ function setup() {
 
 function draw() {
     background(234, 34, 24)
-    // drawBlenderAxis()
+    drawBlenderAxis()
     // dialogBox.renderTextFrame(cam)
 
     // we should only render our text our update if we're playing. This is
     // partially why we created the playing variable anyway.
-    // if (playing) {
-    //
-    //     // how long has Adam given speech for?
-    //     let howLongPlayingFor = millis() - voiceStartMillis + jumpMillis
-    //
-    //     // and if that is greater than 0, we can show our text
-    //     if (howLongPlayingFor - msTimestamps[0] > 0) {
-    //         dialogBox.renderText(font, cam)
-    //         dialogBox.update()
-    //         dialogBox.renderEquilateralTriangle(20, cam)
-    //     }
-    //     dialogBox.advance(howLongPlayingFor)
+    if (playing) {
 
-        // map the milliseconds since it has started from 0 to 40 to a scale
+        // how long has Adam given speech for?
+        let howLongPlayingFor = millis() - voiceStartMillis + jumpMillis - msTimestamps[0]
+
+        // and if that is greater than 0, we can show our text
+        if (howLongPlayingFor > 0) {
+            // we should only turn on animate() if the dialog has started,
+            // and it's also not done
+            if (howLongPlayingFor < 250) {
+                let scale = map(howLongPlayingFor,
+                    0, 250,
+                    0, 1)
+                dialogBox.animate(cam, scale)
+            } else {
+                dialogBox.renderTextFrame(cam)
+            }
+
+            dialogBox.renderText(font, cam)
+            dialogBox.update()
+            dialogBox.renderEquilateralTriangle(20, cam)
+        }
+        dialogBox.advance(howLongPlayingFor)
+
+        // map the milliseconds since it has started from 0 to 250 to a scale
         // for dialogBox.
-        // let scale = map(millis(), voiceStartMillis, voiceStartMillis+40, 0, 1)
-
-
-    let scale = constrain(map(mouseX, 50, width-50, 0, 1), 0, 0.9)
-    dialogBox.animate(scale)
-    // }
+    }
     // console.log(textFrame)
 }
 
 // if we press s, that means we've started
 function keyPressed() {
     if (key === 's') {
-        //artaria.play()
+        artaria.play()
         artaria.jump(jumpMillis/1000)
         playing = !playing
         voiceStartMillis = millis()
